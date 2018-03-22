@@ -5,6 +5,7 @@ This web server is based on Thinkphp frameworks, work with mongodb and deploys o
 
 ## Directory Structure
 
+<pre>
 project                         application deployment directory        
    |- application               application directory   
    |    |- common               common module directory  
