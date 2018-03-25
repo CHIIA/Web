@@ -15,7 +15,7 @@ class Base extends Controller{
     public function _initialize()
     {
         if(!$this->isLogin() && (in_array(Request::instance()->action(),$this->is_check_login)||$this->is_check_login[0]=='')){
-            return $this->error('Please login first','index/login');
+            return $this->error('Please login first','chiia/index/login');
         }
     }
 

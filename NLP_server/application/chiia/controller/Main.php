@@ -51,23 +51,46 @@ class Main extends Base{
     public function task(){
         $data= input('get.');
         $id = isset($data['id'])? $data['id'] : 0;
+        $method = isset($data['method']) ? $data['method'] : '';
+
         $count = Db::table('NLP_ARTICLE')->count();
+
         if($id < 1){
             $id = 1;
         }elseif($id >= $count){
             $id = $count;
         }
-        $result = Db::table('NLP_ARTICLE')->where('id',$id)->select();
-        $this->assign('article', $result);
-        return $this->fetch();
+
+        if($method == ''){
+            $result = Db::table('NLP_ARTICLE')->where('id',$id)->select();
+            if($result){
+                $this->assign('article', $result);
+                return $this->fetch();
+            }
+        }else{
+            while(true){
+                $result = Db::table('NLP_ARTICLE')->where('id',$id)->select();
+                if($result){
+                    $this->assign('article', $result);
+                    return $this->fetch();
+                }
+
+                if($method == 'next'&& $id<$count){
+                    $id = $id+1;
+                }elseif($method == 'last' && $id>1){
+                    $id = $id-1;
+                }
+            }
+        }
     }
 
     public function labelRelevent(){
         $data = input('get.');
         $id = $data['id'];
+        $user = Session::get('username');
 
-        $result = Db::table('NLP_ARTICLE')->where('id',$id)->update(['status'=>1]);
-        $str = 'task?id='.$id;
+        $result = Db::table('NLP_ARTICLE')->where('id',$id)->update(['status'=>1,
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d H:i:s")]);
 
         if($result){
             return $this->success('Labeled success');
@@ -80,9 +103,10 @@ class Main extends Base{
     public function labelIrrelevent(){
         $data = input('get.');
         $id = $data['id'];
+        $user = Session::get('username');
 
-        $result = Db::table('NLP_ARTICLE')->where('id',$id)->update(['status'=>2]);
-        $str = 'task?id='.$id;
+        $result = Db::table('NLP_ARTICLE')->where('id',$id)->update(['status'=>2,
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d H:i:s")]);
 
         if($result){
             return $this->success('Labeled success');
@@ -96,7 +120,7 @@ class Main extends Base{
 
     public function logout(){
         session(null);
-        return $this->success('Logout success.','index/login');
+        return $this->success('Logout success.','chiia/index/login');
     }
 
 

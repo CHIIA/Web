@@ -1,7 +1,10 @@
 <?php
 
 use think\Route;
-Route::get('/','chiia/index');
+Route::rule('','chiia/Index/login');
+Route::rule('check','chiia/index/check');
+Route::rule('chiia/check','chiia/index/check');
+
 
 return [
     '__pattern__' => [

@@ -13,7 +13,7 @@ return [
     // password
     'password'        => 'root',
     // port
-    'hostport'        => '8889',
+    'hostport'        => '3306',
     // dsn connection
     'dsn'             => '',
     // database connection parameters
