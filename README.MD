@@ -32,4 +32,4 @@ project                         application deployment directory
    |- vendor                    Third-parties libraries( Composer )  
    |- thinkphp                  Framework system files  
    |- LICENSE.txt               LICENSE file  
-   
+</pre>

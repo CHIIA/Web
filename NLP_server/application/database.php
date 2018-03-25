@@ -2,17 +2,18 @@
 
 return [
     // database type
-    'type'            => '\think\mongo\connection',
+    //'type'            => '\think\mongo\connection',
+    'type'            => 'mysql',
     // database address
     'hostname'        => '127.0.0.1',
     // database name
-    'database'        => '',
+    'database'        => 'NLP',
     // username
     'username'        => 'root',
     // password
-    'password'        => '',
+    'password'        => 'root',
     // port
-    'hostport'        => '',
+    'hostport'        => '8889',
     // dsn connection
     'dsn'             => '',
     // database connection parameters

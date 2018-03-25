@@ -1,5 +1,8 @@
 <?php
 
+use think\Route;
+Route::get('/','chiia/index');
+
 return [
     '__pattern__' => [
         'name' => '\w+',

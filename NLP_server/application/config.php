@@ -45,13 +45,13 @@ return [
     // +----------------------------------------------------------------------
 
     // default module
-    'default_module'         => 'index',
+    'default_module'         => 'chiia',
     // deny module list
     'deny_module_list'       => ['common'],
     // default controller
     'default_controller'     => 'Index',
     // default action
-    'default_action'         => 'index',
+    'default_action'         => 'login',
     // default validate
     'default_validate'       => '',
     // default empty controller
