@@ -9,6 +9,7 @@
 namespace app\chiia\model;
 use think\model;
 
-class User extends Model{
+class User extends \think\Model{
+    public $table = "NLP_USER";
 
 }

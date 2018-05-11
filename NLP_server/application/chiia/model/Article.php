@@ -9,6 +9,6 @@
 namespace app\chiia\model;
 use think\model;
 
-class Article extends Model{
+class Article extends \think\Model{
 
 }

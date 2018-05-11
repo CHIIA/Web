@@ -7,11 +7,12 @@ return [
     // database address
     'hostname'        => '127.0.0.1',
     // database name
+    //'database'        => 'chiia',
     'database'        => 'NLP',
     // username
     'username'        => 'root',
     // password
-    'password'        => 'root',
+    'password'        => 'lygame218',
     // port
     'hostport'        => '3306',
     // dsn connection
@@ -21,7 +22,7 @@ return [
     // database charset
     'charset'         => 'utf8',
     // database prefix
-    'prefix'          => '',
+    'prefix'          => 'NLP_',
     // database debug mode
     'debug'           => true,
     // database deploy mode, 0 centralization, 1 distribution
@@ -39,7 +40,7 @@ return [
     // auto write timestamp
     'auto_timestamp'  => false,
     // default datetime format
-    'datetime_format' => 'Y-m-d H:i:s',
+    'datetime_format' => 'Y-m-d',
     // sql explain
     'sql_explain'     => false,
 ];

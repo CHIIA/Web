@@ -1,9 +1,13 @@
 <?php
 
 use think\Route;
-Route::rule('','chiia/Index/login');
+Route::rule('','chiia/index/login');
+Route::rule('chiia/index/login','chiia/index/login');
 Route::rule('check','chiia/index/check');
 Route::rule('chiia/check','chiia/index/check');
+Route::rule('chiia/index/check/check','chiia/index/check');
+Route::rule('chiia/index/login/check','chiia/index/check');
+
 
 
 return [

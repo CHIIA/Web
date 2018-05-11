@@ -130,24 +130,51 @@
                     </a>
                     <ul class="sub-menu">
                         <li class="nav-item  ">
-                            <a href="" class="nav-link ">
+                            <a href="../admin/spiderSetting" class="nav-link ">
                                 <i class="icon-eyeglasses"></i>
                                 <span class="title">Web Spider</span>
                             </a>
                         </li>
                         <li class="nav-item  ">
-                            <a href="" class="nav-link ">
+                            <a href="../admin/mlSetting" class="nav-link ">
                                 <i class="icon-rocket"></i>
                                 <span class="title">Learning</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item  ">
-                    <a href="javascript:;" class="nav-link nav-toggle">
-                        <i class="icon-users"></i>
+                <li class="nav-item ">
+                    <a href="" class="nav-link nav-toggle">
+                        <i class="icon-user"></i>
                         <span class="title">User Management</span>
+                        <span class="arrow"></span>
                     </a>
+                    <ul class="sub-menu">
+                        <li class="nav-item  ">
+                            <a href="../admin/add" class="nav-link ">
+                                <i class="icon-user-follow"></i>
+                                <span class="title">Add User</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="../admin/userList" class="nav-link ">
+                                <i class="icon-users"></i>
+                                <span class="title">User List</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="../admin/unassignedJobList" class="nav-link ">
+                                <i class="icon-note"></i>
+                                <span class="title">Assign Job</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="../admin/viewJobList" class="nav-link ">
+                                <i class="icon-grid"></i>
+                                <span class="title">Job List</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item  ">
                     <a href="logout" class="nav-link nav-toggle">
@@ -247,8 +274,8 @@
                                 <tbody>
                                 {foreach $articleData as $value}
                                 <tr class="odd gradeX">
-                                    <td> <a href="task?id={$value['id']}">{$value.id}</td>
-                                    <td> <a href="task?id={$value['id']}">{$value.title}</td>
+                                    <td> <a href="task?articleID={$value['articleID']}">{$value.articleID}</td>
+                                    <td> <a href="task?articleID={$value['articleID']}">{$value.title}</td>
                                     <td> {$value.author}</td>
                                     <td> {$value.date}</td>
                                     <td>
@@ -262,7 +289,7 @@
                                     </td>
                                     <td>{$value.labeledby}</td>
                                     <td>{$value.labeledtime}</td>
-                                    <td>  </td>
+                                    <td>{$value.likelyhood}</td>
                                 </tr>
                                 {/foreach}
                                 </tbody>

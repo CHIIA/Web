@@ -8,7 +8,6 @@
 
 namespace app\chiia\Controller;
 
-use app\chiia\model\Article;
 use think\Controller;
 use think\Db;
 use app\chiia\controller\Base;
@@ -37,7 +36,7 @@ class Main extends Base{
         $result = Db::table('NLP_ARTICLE')->where('status',1)->whereOr('status',2)->select();
         return action('articleList',['result'=>$result]);
     }
-    
+
     public function statistic(){
         $count_article = Db::table('NLP_ARTICLE')->count();
         $count_labeled = Db::table('NLP_ARTICLE')->where('status',1)->whereOr('status',2)->count();
@@ -50,34 +49,56 @@ class Main extends Base{
 
     public function task(){
         $data= input('get.');
-        $id = isset($data['id'])? $data['id'] : 0;
+        $id = isset($data['articleID'])? (int)$data['articleID'] : 0;
         $method = isset($data['method']) ? $data['method'] : '';
 
-        $count = Db::table('NLP_ARTICLE')->count();
+        //$max_query='db.getCollection(\'ARTICLE\').aggregate({"$group":{id : \'max\',max:value:{"$max":"id"}}})';
+        //$min_query='db.getCollection(\'ARTICLE\').aggregate({"$group":{id : \'min\',max:value:{"$min":"id"}}})';
 
-        if($id < 1){
-            $id = 1;
-        }elseif($id >= $count){
-            $id = $count;
+        $max = Db::table('NLP_ARTICLE')->max('articleID');
+        $min = Db::table('NLP_ARTICLE')->min('articleID');
+
+        if($id < $min){
+            $id = $min;
+        }elseif($id >= $max){
+            $id = $max;
         }
 
         if($method == ''){
-            $result = Db::table('NLP_ARTICLE')->where('id',$id)->select();
+            $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->select();
+
+            if (count($result) != 0) {
+                $file_path = '../article/'.$result[0]["content"];
+            }else
+            {
+                $file_path = '';
+            }
+
             if($result){
                 $this->assign('article', $result);
+                $this->assign('file_path',$file_path);
                 return $this->fetch();
             }
         }else{
             while(true){
-                $result = Db::table('NLP_ARTICLE')->where('id',$id)->select();
+                $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->select();
+
+                if (count($result) != 0) {
+                    $file_path = '../article/'.$result[0]["content"];
+                }else
+                {
+                    $file_path = '';
+                }
+
                 if($result){
                     $this->assign('article', $result);
+                    $this->assign('file_path',$file_path);
                     return $this->fetch();
                 }
 
-                if($method == 'next'&& $id<$count){
+                if($method == 'next'&& $id<$max){
                     $id = $id+1;
-                }elseif($method == 'last' && $id>1){
+                }elseif($method == 'last' && $id>$min){
                     $id = $id-1;
                 }
             }
@@ -86,11 +107,11 @@ class Main extends Base{
 
     public function labelRelevent(){
         $data = input('get.');
-        $id = $data['id'];
+        $id = $data['articleID'];
         $user = Session::get('username');
 
-        $result = Db::table('NLP_ARTICLE')->where('id',$id)->update(['status'=>1,
-            'labeledby'=> $user,'labeledtime' => date("Y-m-d H:i:s")]);
+        $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->update(['status'=>1, 'assign'=>'1',
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d")]);
 
         if($result){
             return $this->success('Labeled success');
@@ -102,11 +123,11 @@ class Main extends Base{
 
     public function labelIrrelevent(){
         $data = input('get.');
-        $id = $data['id'];
+        $id = $data['articleID'];
         $user = Session::get('username');
 
-        $result = Db::table('NLP_ARTICLE')->where('id',$id)->update(['status'=>2,
-            'labeledby'=> $user,'labeledtime' => date("Y-m-d H:i:s")]);
+        $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->update(['status'=>2, 'assign'=>'1',
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d")]);
 
         if($result){
             return $this->success('Labeled success');

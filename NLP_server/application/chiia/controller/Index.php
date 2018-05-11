@@ -22,6 +22,11 @@ class Index extends Controller
     {
         $data = input('post.');
         $user = New User();
+
+        //query in mongo
+//        $result = Db::table('USER')->where('username',$data['username'])->find();
+
+//        query in mysql
         $result = Db::table('NLP_USER')->where('username',$data['username'])->find();
 
         if ($result){
