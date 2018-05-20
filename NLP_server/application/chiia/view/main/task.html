@@ -278,6 +278,26 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div>
+                                        <div class="actions" align="right">
+                                            <?php
+                                            $previous = $article['articleID'] -1;
+                                            $next = $article['articleID'] + 1;
+                                            ?>
+                                            <a class="btn btn-circle btn-icon-only btn-default" href="task?articleID={$previous}&&method=last">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </a>
+                                            <a class="btn btn-circle btn-icon-only btn-default" href="task?articleID={$next}&&method=next">
+                                                <i class="fa fa-arrow-right"></i>
+                                            </a>
+                                            <a class="btn btn-circle btn-icon-only btn-default" href="labelRelevent?articleID={$article['articleID']}">
+                                                <i class="fa fa-check font-green"></i>
+                                            </a>
+                                            <a class="btn btn-circle btn-icon-only btn-default" href="labelIrrelevent?articleID={$article['articleID']}">
+                                                <i class="fa fa-close font-red"></i>
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                                 {/foreach}
                             </div>

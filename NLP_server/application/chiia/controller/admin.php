@@ -75,6 +75,12 @@ class Admin extends Controller{
 
     public function userList(){
         $result = Db::table('NLP_USER')->select();
+
+        foreach($result as &$i){
+            $count = Db::table('NLP_JOBLIST')->where('userID',$i['userID'])->count('userID');
+            $i['count'] = $count;
+        }
+
         $this->assign('userData',$result);
         return $this->fetch();
     }

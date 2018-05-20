@@ -30,10 +30,16 @@ class Index extends Controller
         $result = Db::table('NLP_USER')->where('username',$data['username'])->find();
 
         if ($result){
-            if($result['password'] === ($data['password'])){
+            if($result['password'] === ($data['password']) && $result['authority'] == 1){
                 session('username',$data['username']);
+                session('userID',$result['userID']);
                 $this->success('Login success','Main/statistic');
-            }else{
+            }elseif($result['password'] === ($data['password']) && $result['authority'] == 2){
+                session('username',$data['username']);
+                session('userID',$result['userID']);
+                $this->success('Login success','research/statistic');
+            }
+            else{
                 $this->error('PASSWORD, USERNAME NOT MATCH');
             }
         }else{

@@ -44,7 +44,7 @@
     <div class="page-header-inner ">
         <!-- BEGIN LOGO -->
         <div class="page-logo">
-            <a href="statistic">
+            <a href="../main/statistic">
                 <img src="/assets/layouts/layout4/img/new_logo.png" alt="logo" class="logo-default" /> </a>
             <div class="menu-toggler sidebar-toggler">
                 <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header -->
@@ -266,6 +266,7 @@
                                     <th> Password </th>
                                     <th> Phone </th>
                                     <th> Email </th>
+                                    <th> Workload</th>
                                     <th> Authority </th>
                                     <th> Operation </th>
                                 </tr>
@@ -278,6 +279,7 @@
                                     <td> {$value.password}</td>
                                     <td> {$value.phone}</td>
                                     <td> {$value.email}</td>
+                                    <td> {$value.count}</td>
                                     <td>
                                         <?php if($value['authority'] == 1){ ?>
                                         <span class="label label-sm label-danger"> Administrator </span>

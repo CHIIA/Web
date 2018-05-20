@@ -12,7 +12,7 @@ return [
     // username
     'username'        => 'root',
     // password
-    'password'        => 'lygame218',
+    'password'        => 'root',
     // port
     'hostport'        => '3306',
     // dsn connection
