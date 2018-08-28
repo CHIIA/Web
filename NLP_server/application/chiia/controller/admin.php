@@ -34,10 +34,6 @@ class Admin extends Controller{
         }
 
         $user = new UserModel($data);
-        dump($user);
-        die;
-//        dump($user);
-//        die;
         $result = $user->allowField(true)->save();
         if($result){
             $this->success('Success','admin/userList');
@@ -96,8 +92,20 @@ class Admin extends Controller{
 
     public function deleteUser(){
         $id = input('get.userID');
+        $result = false;
 
-        $result = UserModel::destroy($id,true);
+        $usersArticle = Db::table('NLP_JOBLIST')->where('userID',$id)->select();
+
+        foreach ($usersArticle as $k){
+            Db::table('NLP_ARTICLE')->where('articleID', $k['articleID'])->update(['assign'=>'0']);
+        }
+
+        $temp_result = Db::table("NLP_JOBLIST")->where('userID',$id)->delete(true);
+
+        if($temp_result){
+            $result = UserModel::destroy($id,true);
+        }
+
         if($result){
             $this->success('Delete Successfully', 'admin/userList');
         } else {
@@ -176,12 +184,17 @@ class Admin extends Controller{
 
     public function startSpider(){
 
-        $result = shell_exec("");
+        exec("cd Crawler; ls; mkdir abc; ls; rmdir abc; ls; cd ..;ls",$result,$status);
+        dump($result);
+        dump($status);
 
-        if($result){
-            $this->success('execute successfully! Please wait for a while!');
+//        $result = shell_exec("source activate python3 & scrapy runspider /var/www/chiia-nlp/public/Crawler/CHIIA/spiders/fectiva.py");
+
+        if($status != 0 ){
+            $this->error('Error');
+
         } else {
-            $this->success('Processing');
+            $this->success('execute successfully! Please wait for a while!');
         }
 
     }

@@ -127,4 +127,36 @@ class research extends Base{
         }
     }
 
+    public function labelRelevent(){
+        $data = input('get.');
+        $id = $data['articleID'];
+        $user = Session::get('username');
+
+        $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->update(['status'=>1, 'assign'=>'1',
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d")]);
+
+        if($result){
+            return $this->success('Labeled success');
+        }
+        else{
+            return $this->error('Labeled failed');
+        }
+    }
+
+    public function labelIrrelevent(){
+        $data = input('get.');
+        $id = $data['articleID'];
+        $user = Session::get('username');
+
+        $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->update(['status'=>2, 'assign'=>'1',
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d")]);
+
+        if($result){
+            return $this->success('Labeled success');
+        }
+        else{
+            return $this->error('Labeled failed');
+        }
+    }
+
 }

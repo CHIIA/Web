@@ -8,8 +8,6 @@ Route::rule('chiia/check','chiia/index/check');
 Route::rule('chiia/index/check/check','chiia/index/check');
 Route::rule('chiia/index/login/check','chiia/index/check');
 
-
-
 return [
     '__pattern__' => [
         'name' => '\w+',
