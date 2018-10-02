@@ -107,11 +107,38 @@
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item ">
-                    <a href="../main/allArticleList" class="nav-link nav-toggle">
+                <li class="nav-item  ">
+                    <a href="../main/articleIndex" class="nav-link nav-toggle">
                         <i class="icon-notebook"></i>
-                        <span class="title">Article</span>
+                        <span class="title">Articles</span>
+                        <span class="arrow"></span>
                     </a>
+                    <ul class="sub-menu">
+                        <li class="nav-item  ">
+                            <a href="../main/articleIndex" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">Search Article</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="../main/allArticleList" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">All Articles</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="../main/labeledArticleList" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">Labeled Articles</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="../main/unLabeledArticleList" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">Unlabeled Articles</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item  ">
                     <a href="../main/task" class="nav-link nav-toggle">
@@ -163,7 +190,7 @@
                             </a>
                         </li>
                         <li class="nav-item  ">
-                            <a href="../admin/unassignedJobList" class="nav-link ">
+                            <a href="../admin/assignindex" class="nav-link ">
                                 <i class="icon-note"></i>
                                 <span class="title">Assign Job</span>
                             </a>
@@ -258,6 +285,7 @@
                             <table class="table table-striped table-bordered table-hover table-checkable order-column" id="sample_1">
                                 <thead>
                                 <tr>
+                                    <th></th>
                                     <th> articleID </th>
                                     <th> title </th>
                                     <th> userID </th>
@@ -268,6 +296,7 @@
                                 <tbody>
                                 {foreach $data as $value}
                                 <tr class="odd gradeX">
+                                    <td></td>
                                     <td> <a href="../main/task?articleID={$value['articleID']}">{$value.articleID}</td>
                                     <td> <a href="../main/task?articleID={$value['articleID']}">{$value.title}</td>
                                     <td> {$value.userID}</td>

@@ -8,12 +8,14 @@
 
 namespace app\chiia\controller;
 
+use app\chiia\model\Spider;
 use app\chiia\validate\User;
 use think\console\command\make\Model;
 use think\Controller;
 use think\Db;
 use app\chiia\model\User as UserModel;
 use app\chiia\validate\User as UserValidate;
+use app\chiia\validate\Spider as SpiderValidate;
 use app\chiia\model\Article as ArticleMode;
 
 
@@ -113,12 +115,80 @@ class Admin extends Controller{
         }
     }
 
-
-    public function unassignedJobList(){
-        $result = Db::table('NLP_ARTICLE')->where('assign',0)->where('status=0 OR status=2')->select();
-        $this->assign('data',$result);
+    public function assignIndex(){
+        $result = Db::table('NLP_ARTICLE')->where('status','=',0)->where('assign','=',0)->order('articleID desc')->limit(100)->select();
+        $this->assign('articleData',$result);
         return $this->fetch();
     }
+
+    public function unassignedList(){
+        $data= input('post.');
+
+        $AN = input('post.AN','');
+        $articleID = input('post.articleID','');
+        $title = input('post.title','');
+        $author = input('post.author','');
+        $fromDate = input('post.fromDate','');
+        $toDate = input('post.toDate','');
+        $blog = input('post.blog','');
+        $website = input('post.website','');
+        $Dowjones = input('post.Dowjones','');
+        $publication = input('post.publication','');
+        $upperLikelihood = (input('post.upperLikelihood','') !='') ? (float)input('post.upperLikelihood') : '';
+        $lowerLikelihood = (input('post.lowerLikelihood','') !='') ? (float)input('post.lowerLikelihood') : '';
+
+        $ANlike = '%'.$AN.'%';
+        $articleIDlike = '%'.$articleID.'%';
+        $titlelike = '%'.$title.'%';
+        $authorlike = '%'.$author.'%';
+
+
+        $result=Db::query("SELECT * FROM NLP_ARTICLE as A
+                              WHERE (A.AN LIKE ? OR ?='')
+                              AND (A.articleID LIKE ? OR ?='')
+                              AND (A.title LIKE ? OR ?='')
+                              AND (A.author LIKE ? OR ?='')
+                              AND (A.date >=? OR ?='')
+                              AND (A.date <=? OR ?='')
+                              AND ((A.source=?
+                              OR A.source=?
+                              OR A.source=?
+                              OR A.source=?)
+                              OR (?='' AND ?='' AND  ?='' AND ?=''))
+                              AND A.status=0
+                              AND A.assign=0
+                              AND (A.likelyhood >=? OR ?='')
+                              AND (A.likelyhood <=? OR ?='')",
+            [$ANlike, $AN, $articleIDlike,$articleID,$titlelike,$title,$authorlike,$author,$fromDate,$fromDate,$toDate,$toDate,
+                $blog, $website,$Dowjones,$publication,$blog, $website,$Dowjones,$publication,
+                $upperLikelihood,$upperLikelihood,$lowerLikelihood,$lowerLikelihood]);
+
+        $value = [];
+        foreach ($result as $tmp){
+            $array = [
+                'articleID' => $tmp['articleID'],
+                'ID' => $tmp['ID'],
+                'title' => $tmp['title'],
+                'author' => $tmp['author'],
+                'date' => $tmp['date'],
+                'source' => $tmp['source'],
+                'status' => $tmp['status'],
+                'labeledby' => $tmp['labeledby'],
+                'labeledtime' => $tmp['labeledtime'],
+                'likelyhood' => $tmp['likelyhood'],
+            ];
+            $value[] = $array;
+        }
+        ini_set('memory_limit','4096M');
+        $this->assign('data',$value);
+        return $this->fetch();
+    }
+
+//    public function unassignedJobList(){
+//        $result = Db::table('NLP_ARTICLE')->where('assign',0)->where('status=0 OR status=2')->select();
+//        $this->assign('data',$result);
+//        return $this->fetch();
+//    }
 
     public function selectWorker(){
         $data = input('post.');
@@ -174,8 +244,87 @@ class Admin extends Controller{
         return $this->fetch();
     }
 
+
     public function spiderSetting(){
+        $result = Db::table('NLP_SPIDER')->order("id desc")->select();
+
+        foreach ($result as &$tmp){
+            $tmp['progress'] = $tmp['progress']*100;
+            $tmp['progress'] = sprintf("%.2f",$tmp['progress']);
+            $tmp['progress'] = $tmp['progress'].'%';
+        }
+        $this->assign('record',$result);
         return $this->fetch();
+    }
+
+    public function getProgress(){
+
+        $current = Db::table('NLP_SPIDER')->order('id desc')->limit(1)->select();
+        $result = $current[0]["progress"]*100;
+        $num = sprintf("%.2f",$result);
+        return $num;
+    }
+
+    public function getLog(){
+        $current = Db::table('NLP_SPIDER')->order('id desc')->limit(1)->select();
+        $crawlerLog = $current[0]["log"];
+        $segmentLog = explode("\n",$crawlerLog);
+        $count = count($segmentLog);
+        $viewLog = [];
+        if($count>100){
+            for($i = $count-100; $i<$count; $i++){
+                $viewLog[] = "<br>".$segmentLog[$i];
+            }
+        }else{
+            for($i =0; $i<$count;$i++){
+                $viewLog[] = "<br>".$segmentLog[$i];
+            }
+        }
+        return $viewLog;
+    }
+
+    public function addSpider(){
+        return $this->fetch();
+    }
+
+    public function insertSpider(){
+        $data = input('post.');
+        $val = new SpiderValidate();
+        if (!$val -> check($data)){
+            $this->error($val->getError());
+            exit;
+        }
+
+        $user = new Spider($data);
+        $result = $user->allowField(true)->save();
+        if($result){
+            $this->success('Success','admin/spidersetting');
+        }else{
+            $this->error('Failed');
+        }
+
+    }
+
+    public function updateSpider(){
+        $data = input('post.');
+        $id = input("post.id");
+
+        $val = new SpiderValidate();
+
+        if (!$val -> check($data)){
+            $this->error($val->getError());
+            exit;
+        }
+
+        $spider = new Spider();
+        $result = $spider->allowField(true)->save($data,['id' => $id]);
+
+        if($result){
+            $this->success('Update Successfully', 'admin/spiderSetting');
+        } else {
+            $this->error('Update Failed');
+        }
+
     }
 
     public function mlSetting(){
@@ -183,18 +332,17 @@ class Admin extends Controller{
     }
 
     public function startSpider(){
+        ignore_user_abort(true);
+        set_time_limit(0);
 
-        exec("cd Crawler; ls; mkdir abc; ls; rmdir abc; ls; cd ..;ls",$result,$status);
-        dump($result);
-        dump($status);
-
-//        $result = shell_exec("source activate python3 & scrapy runspider /var/www/chiia-nlp/public/Crawler/CHIIA/spiders/fectiva.py");
+        exec("cd Crawler/headless;nohup python crawler.py & 2>&1",
+            $result,$status);
 
         if($status != 0 ){
-            $this->error('Error');
+            $this->error('Error','spiderSetting','',30);
 
         } else {
-            $this->success('execute successfully! Please wait for a while!');
+            $this->success('execute successfully! Please wait for a while!','spiderSetting','',30);
         }
 
     }

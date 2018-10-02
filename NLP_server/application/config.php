@@ -6,9 +6,9 @@ return [
     // +----------------------------------------------------------------------
 
     // debug model
-    'app_debug'              => false,
+    'app_debug'              => true,
     // application trace
-    'app_trace'              => false,
+    'app_trace'              => true,
     // application status
     'app_status'             => '',
     // application multiple module support

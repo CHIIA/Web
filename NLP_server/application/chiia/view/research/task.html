@@ -31,16 +31,6 @@
     <link href="/assets/layouts/layout4/css/custom.min.css" rel="stylesheet" type="text/css" />
     <!-- END THEME LAYOUT STYLES -->
     <link rel="shortcut icon" href="favicon.ico" />
-    <script src="/assets/apps/scripts/pdfobject.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        window.onload = function (){
-            var file_path = "<?=$file_path?>";
-            PDFObject.embed("__ROOT__/"+file_path, "#pdf");
-        };
-    </script>
-    <style>
-        .pdfobject-container{height: 600px}
-    </style>
 </head>
 <!-- END HEAD -->
 
@@ -114,11 +104,38 @@
                         <span class="title">Dashboard</span>
                     </a>
                 </li>
-                <li class="nav-item  ">
-                    <a href="allArticleList" class="nav-link nav-toggle">
+                <li class="nav-item ">
+                    <a href="articleIndex" class="nav-link nav-toggle">
                         <i class="icon-notebook"></i>
-                        <span class="title">Article</span>
+                        <span class="title">Articles</span>
+                        <span class="arrow"></span>
                     </a>
+                    <ul class="sub-menu">
+                        <li class="nav-item  ">
+                            <a href="articleIndex" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">Search Article</span>
+                            </a>
+                        </li>
+                        <li class="nav-item ">
+                            <a href="allArticleList" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">All Articles</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="labeledArticleList" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">Labeled Articles</span>
+                            </a>
+                        </li>
+                        <li class="nav-item  ">
+                            <a href="unLabeledArticleList" class="nav-link ">
+                                <i class="icon-notebook"></i>
+                                <span class="title">Unlabeled Articles</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item active">
                     <a href="task" class="nav-link nav-toggle">
@@ -199,28 +216,51 @@
                             </div>
                             <div class="portlet-body">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="well">
-                                            <address style="margin-bottom: 0px">
-                                                <?php if($article['status'] == 0){ ?>
-                                                <span class="label label-sm label-default"> Unlabeled </span>
-                                                <?php }elseif($article['status'] == 1){ ?>
-                                                <span class="label label-sm label-success"> Relevant </span>
-                                                <?php }elseif($article['status'] == 2){ ?>
-                                                <span class="label label-sm label-danger"> Irrelevant </span>
-                                                <?php }?>
-                                                <br>
+                                    <br class="col-md-12">
+                                    <div class="well">
+                                        <address style="margin-bottom: 0px">
+                                            <?php if($article['status'] == 0){ ?>
+                                            <span class="label label-sm label-default"> Unlabeled </span>
+                                            <?php }elseif($article['status'] == 1){ ?>
+                                            <span class="label label-sm label-success"> Relevant </span>
+                                            <?php }elseif($article['status'] == 2){ ?>
+                                            <span class="label label-sm label-danger"> Irrelevant </span>
+                                            <?php }?>
+                                            <br>
 
-                                                <br> ID:{$article.articleID}
-                                                <br> Publish Date:{$article.date}
-                                                <br> Crawl Date:{$article.crawldate}
+                                            <br> ID:{$article.articleID}
+                                            <br> AN:{$article.ID}
+                                            <br> Publish Date:{$article.date}
+                                            <br> Crawl Date:{$article.crawldate}
 
-                                                <br>Author:{$article.author}
-                                                <br>
-                                                <a href=""> link </a>
-                                            </address>
+                                            <br>Author:{$article.author}
+                                            <br>
+                                        </address>
+                                    </div>
+                                    <div>
+                                        <?php if($article['source'] == 'Website' || $article['source'] == 'Blog'){ ?>
+                                        <br> This article is a WEBSITE resources, CLICK to OPEN new page
+                                        <br>
+                                        <br> !!! This is a copy of the original resources!!!
+                                        <br>
+                                        <br> !!! NO USE FOR COMMERCIAL!!!!!!!!!!!!!!!!!!!!!!
+                                        <br>
+                                        <br>
+                                        <br>
+                                        <form method="post" action="viewWebsiteContent" target="_blank">
+                                            <input type="hidden" name="articleID" value="{$article.articleID}"/>
+                                            <div class="form-actions noborder">
+                                                <button type="submit" class="btn blue">New Page to View</button>
+                                            </div>
+                                        </form>
+                                        <?php }else{ ?>
+
+                                        <button id="exportToPdf" style="float:right">Export PDF</button>
+                                        <div id="export_content">
+                                            {$article.content}
                                         </div>
-                                        <div id="pdf"><a href=""></a></div>
+
+                                        <?php }?>
                                     </div>
                                 </div>
                             </div>
@@ -311,6 +351,47 @@
 <!-- BEGIN PAGE LEVEL SCRIPTS -->
 <script src="/assets/pages/scripts/dashboard.min.js" type="text/javascript"></script>
 <!-- END PAGE LEVEL SCRIPTS -->
+<!--BEGIN TOPDF SCRIPTS-->
+<script src="/assets/topdf/jspdf.debug.js" type="text/javascript"></script>
+<script src="/assets/topdf/html2canvas.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var downPdf = document.getElementById("exportToPdf");
+    downPdf.onclick = function () {
+        html2canvas(
+            document.getElementById("export_content"),
+            {
+                dpi: 172,
+                onrendered: function (canvas) {
+                    var contentWidth = canvas.width;
+                    var contentHeight = canvas.height;
+                    var pageHeight = contentWidth / 592.28 * 841.89;
+                    var leftHeight = contentHeight;
+                    var position = 0;
+                    var imgWidth = 595.28;
+                    var imgHeight = 592.28 / contentWidth * contentHeight;
+
+                    var pageData = canvas.toDataURL('image/jpeg', 1.0);
+                    var pdf = new jsPDF('', 'pt', 'a4');
+
+                    if (leftHeight < pageHeight) {
+                        pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
+                    } else {
+                        while (leftHeight > 0) {
+                            pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                            leftHeight -= pageHeight;
+                            position -= 841.89;
+                            if (leftHeight > 0) {
+                                pdf.addPage();
+                            }
+                        }
+                    }
+                    pdf.save('content.pdf');
+                },
+                background: "#fff"
+            })
+    }
+</script>
+<!--END TOPDF SCRIPTS-->
 <!-- BEGIN THEME LAYOUT SCRIPTS -->
 <script src="/assets/layouts/layout4/scripts/layout.min.js" type="text/javascript"></script>
 <script src="/assets/layouts/layout4/scripts/demo.min.js" type="text/javascript"></script>

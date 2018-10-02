@@ -39,7 +39,88 @@ class research extends Base{
         return $this->fetch();
     }
 
+    public function articleIndex(){
+        $userID = Session::get('userID');
+        $result = Db::query("SELECT * FROM NLP_ARTICLE NATURAL JOIN NLP_JOBLIST WHERE userID=? ORDER BY articleID DESC LIMIT 100",[$userID]);
+        $this->assign('articleData',$result);
+        return $this->fetch();
+    }
+
+    public function searchArticle(){
+        $data= input('post.');
+        $userID = Session::get('userID');
+
+        $AN = input('post.AN','');
+        $articleID = input('post.articleID','');
+        $title = input('post.title','');
+        $author = input('post.author','');
+        $fromDate = input('post.fromDate','');
+        $toDate = input('post.toDate','');
+        $blog = input('post.blog','');
+        $website = input('post.website','');
+        $Dowjones = input('post.Dowjones','');
+        $publication = input('post.publication','');
+        $unlabeled = (input('post.unlabeled','') != '') ? (int)input('post.unlabeled') : 9;
+        $labeledR = (input('post.labeledR','') !='') ? (int)input('post.labeledR') : 9;
+        $labeledIR = (input('post.labeledIR','') !='') ? (int)input('post.labeledIR') : 9;
+        $upperLikelihood = (input('post.upperLikelihood','') !='') ? (float)input('post.upperLikelihood') : '';
+        $lowerLikelihood = (input('post.lowerLikelihood','') !='') ? (float)input('post.lowerLikelihood') : '';
+
+        $ANlike = '%'.$AN.'%';
+        $articleIDlike = '%'.$articleID.'%';
+        $titlelike = '%'.$title.'%';
+        $authorlike = '%'.$author.'%';
+
+
+        $result=Db::query("SELECT * FROM NLP_ARTICLE as A NATURAL JOIN NLP_JOBLIST AS J 
+                              WHERE (J.userID=?)
+                              AND (A.AN LIKE ? OR ?='')
+                              AND (A.articleID LIKE ? OR ?='')
+                              AND (A.title LIKE ? OR ?='')
+                              AND (A.author LIKE ? OR ?='')
+                              AND (A.date >=? OR ?='')
+                              AND (A.date <=? OR ?='')
+                              AND ((A.source=?
+                              OR A.source=?
+                              OR A.source=?
+                              OR A.source=?)
+                              OR (?='' AND ?='' AND  ?='' AND ?=''))
+                              AND ((A.status=?
+                              OR A.status=?
+                              OR A.status=?)
+                              OR (?=9 AND ?=9 AND ?=9))
+                              AND (A.likelyhood >=? OR ?='')
+                              AND (A.likelyhood <=? OR ?='')",
+            [$userID,$ANlike, $AN, $articleIDlike,$articleID,$titlelike,$title,$authorlike,$author,$fromDate,$fromDate,$toDate,$toDate,
+                $blog, $website,$Dowjones,$publication,$blog, $website,$Dowjones,$publication,
+                $unlabeled,$labeledR,$labeledIR,$unlabeled,$labeledR,$labeledIR,
+                $upperLikelihood,$upperLikelihood,$lowerLikelihood,$lowerLikelihood]);
+
+        $value = [];
+        foreach ($result as $tmp){
+            $array = [
+                'articleID' => $tmp['articleID'],
+                'ID' => $tmp['ID'],
+                'title' => $tmp['title'],
+                'author' => $tmp['author'],
+                'date' => $tmp['date'],
+                'source' => $tmp['source'],
+                'status' => $tmp['status'],
+                'labeledby' => $tmp['labeledby'],
+                'labeledtime' => $tmp['labeledtime'],
+                'likelyhood' => $tmp['likelyhood'],
+            ];
+            $value[] = $array;
+        }
+        ini_set('memory_limit','4096M');
+
+
+        $this->assign('articleData',$value);
+        return $this->fetch();
+    }
+
     public function articlelist($result){
+        ini_set('memory_limit','4096M');
         $this->assign('articleData',$result);
         return $this->fetch();
     }
@@ -47,19 +128,70 @@ class research extends Base{
     public function unlabeledarticlelist(){
         $userID = Session::get('userID');
         $result = Db::query('SELECT * FROM NLP_ARTICLE NATURAL JOIN NLP_JOBLIST WHERE userID=? AND status = 0',[$userID]);
-        return action('articleList',['result'=>$result]);
+        $value = [];
+        foreach ($result as $tmp){
+            $array = [
+                'articleID' => $tmp['articleID'],
+                'ID' => $tmp['ID'],
+                'title' => $tmp['title'],
+                'author' => $tmp['author'],
+                'date' => $tmp['date'],
+                'source' => $tmp['source'],
+                'status' => $tmp['status'],
+                'labeledby' => $tmp['labeledby'],
+                'labeledtime' => $tmp['labeledtime'],
+                'likelyhood' => $tmp['likelyhood'],
+            ];
+            $value[] = $array;
+        }
+        ini_set('memory_limit','4096M');
+        return action('articleList',['result'=>$value]);
     }
 
     public function allarticlelist(){
         $userID = Session::get('userID');
         $result = Db::query('SELECT * FROM NLP_ARTICLE NATURAL JOIN NLP_JOBLIST WHERE userID=?',[$userID]);
-        return action('articleList',['result'=>$result]);
+        $value = [];
+        foreach ($result as $tmp){
+            $array = [
+                'articleID' => $tmp['articleID'],
+                'ID' => $tmp['ID'],
+                'title' => $tmp['title'],
+                'author' => $tmp['author'],
+                'date' => $tmp['date'],
+                'source' => $tmp['source'],
+                'status' => $tmp['status'],
+                'labeledby' => $tmp['labeledby'],
+                'labeledtime' => $tmp['labeledtime'],
+                'likelyhood' => $tmp['likelyhood'],
+            ];
+            $value[] = $array;
+        }
+        ini_set('memory_limit','4096M');
+        return action('articleList',['result'=>$value]);
     }
 
     public function labeledarticlelist(){
         $userID = Session::get('userID');
         $result = Db::query('SELECT * FROM NLP_ARTICLE NATURAL JOIN NLP_JOBLIST WHERE userID=? AND status <> 0',[$userID]);
-        return action('articleList',['result'=>$result]);
+        $value = [];
+        foreach ($result as $tmp){
+            $array = [
+                'articleID' => $tmp['articleID'],
+                'ID' => $tmp['ID'],
+                'title' => $tmp['title'],
+                'author' => $tmp['author'],
+                'date' => $tmp['date'],
+                'source' => $tmp['source'],
+                'status' => $tmp['status'],
+                'labeledby' => $tmp['labeledby'],
+                'labeledtime' => $tmp['labeledtime'],
+                'likelyhood' => $tmp['likelyhood'],
+            ];
+            $value[] = $array;
+        }
+        ini_set('memory_limit','4096M');
+        return action('articleList',['result'=>$value]);
     }
 
     public function task(){
@@ -73,8 +205,6 @@ class research extends Base{
         $max = $max[0]['maxID'];
         $min = $min[0]['minID'];
 
-//        $max = Db::table('NLP_ARTICLE')->max('articleID');
-//        $min = Db::table('NLP_ARTICLE')->min('articleID');
 
         if($id < $min){
             $id = $min;
@@ -85,36 +215,16 @@ class research extends Base{
         if($method == ''){
             $result = Db::query('SELECT * FROM NLP_ARTICLE NATURAL JOIN NLP_JOBLIST WHERE userID=? AND articleID=?',[$userID,$id]);
 
-//            $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->select();
-
-            if (count($result) != 0) {
-                $file_path = '../article/'.$result[0]["content"];
-            }else
-            {
-                $file_path = '';
-            }
-
             if($result){
                 $this->assign('article', $result);
-                $this->assign('file_path',$file_path);
                 return $this->fetch();
             }
         }else{
             while(true){
                 $result = Db::query('SELECT * FROM NLP_ARTICLE NATURAL JOIN NLP_JOBLIST WHERE userID=? AND articleID=?',[$userID,$id]);
 
-//                $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->select();
-
-                if (count($result) != 0) {
-                    $file_path = '../article/'.$result[0]["content"];
-                }else
-                {
-                    $file_path = '';
-                }
-
                 if($result){
                     $this->assign('article', $result);
-                    $this->assign('file_path',$file_path);
                     return $this->fetch();
                 }
 
@@ -124,6 +234,19 @@ class research extends Base{
                     $id = $id-1;
                 }
             }
+        }
+    }
+
+    public function viewWebsiteContent(){
+        ini_set('memory_limit','256M');
+        $data= input('post.');
+        $id = $data['articleID'];
+
+        $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->select();
+
+        if($result){
+            $this->assign('article', $result);
+            return $this->fetch();
         }
     }
 
