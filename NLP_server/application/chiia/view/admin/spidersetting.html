@@ -75,7 +75,7 @@
         function logView()
         {
             var div = document.getElementById('scrolldIV');
-            var log;
+            var log = 'Loading Log...';
             var id = setInterval(getLog, 1000);
             function getLog(){
                 $.get("{:url('Admin/getLog')}",function (data) {
@@ -317,14 +317,20 @@
             </div>
 
             <div class="portlet light bordered">
+                <button type="submit" class="btn blue" onclick="window.location.href='addSpider'">Start New Mission</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button type="submit" class="btn blue" onclick="alert('Success! Please Wait A While');window.location.href='startSpider'">EXECUTE WEB CRAWLER</button>
+            </div>
+
+
+            <div class="portlet light bordered">
                 <div class="portlet-title">
                     <div class="caption font-dark">
                         <i class="icon-settings font-dark"></i>
                         <span class="caption-subject bold uppercase">Crawler Log</span>
                     </div>
                 </div>
-                <div class="portlet-body">
-                    <table class="table table-striped table-bordered table-hover table-checkable order-column" id="sample_1">
+                <div class="portlet-body table-both-scroll">
+                    <table class="table table-striped table-bordered table-hover order-column" id="sample_3">
                         <thead>
                         <tr>
                             <th> id </th>
@@ -350,11 +356,6 @@
                     </table>
                 </div>
             </div>
-
-            <button type="submit" class="btn blue" onclick="window.location.href='addSpider'">Start New Mission</button>
-            <br>
-            <br>
-            <button type="submit" class="btn blue" onclick="alert('Success! Please Wait A While');window.location.href='startSpider'">EXECUTE WEB CRAWLER</button>
 
 
             <!-- END PAGE BASE CONTENT -->

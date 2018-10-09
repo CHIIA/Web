@@ -142,6 +142,10 @@ class Admin extends Controller{
         $titlelike = '%'.$title.'%';
         $authorlike = '%'.$author.'%';
 
+//        dump($fromDate);
+//        dump($toDate);
+//        die;
+
 
         $result=Db::query("SELECT * FROM NLP_ARTICLE as A
                               WHERE (A.AN LIKE ? OR ?='')
@@ -247,7 +251,6 @@ class Admin extends Controller{
 
     public function spiderSetting(){
         $result = Db::table('NLP_SPIDER')->order("id desc")->select();
-
         foreach ($result as &$tmp){
             $tmp['progress'] = $tmp['progress']*100;
             $tmp['progress'] = sprintf("%.2f",$tmp['progress']);
@@ -258,7 +261,6 @@ class Admin extends Controller{
     }
 
     public function getProgress(){
-
         $current = Db::table('NLP_SPIDER')->order('id desc')->limit(1)->select();
         $result = $current[0]["progress"]*100;
         $num = sprintf("%.2f",$result);
@@ -339,27 +341,46 @@ class Admin extends Controller{
             $result,$status);
 
         if($status != 0 ){
-            $this->error('Error','spiderSetting','',30);
+            $this->error('Error','spiderSetting','',2);
 
         } else {
-            $this->success('execute successfully! Please wait for a while!','spiderSetting','',30);
+            $this->success('execute successfully! Please wait for a while!','spiderSetting','',2);
         }
 
+    }
+
+    public function getModelLog(){
+        $current = Db::table('NLP_ML')->order('id desc')->limit(1)->select();
+        $crawlerLog = $current[0]["log"];
+        $segmentLog = explode("\n",$crawlerLog);
+        $count = count($segmentLog);
+        $viewLog = [];
+        if($count>100){
+            for($i = $count-100; $i<$count; $i++){
+                $viewLog[] = "<br>".$segmentLog[$i];
+            }
+        }else{
+            for($i =0; $i<$count;$i++){
+                $viewLog[] = "<br>".$segmentLog[$i];
+            }
+        }
+        return $viewLog;
     }
 
     public function startML(){
+        ignore_user_abort(true);
+        set_time_limit(0);
 
-        $result = shell_exec("source activate python3 & python /var/www/chiia-nlp/public/model/main.py");
+        exec("cd Crawler/headless;nohup python train.py & 2>&1",
+            $result,$status);
 
-        if($result){
-            $this->success('execute successfully! Please wait for a while!');
+        if($status != 0 ){
+            $this->error('Error','mlSetting','',2);
+
         } else {
-            $this->success('Processing');
+            $this->success('execute successfully! Please wait for a while!','mlSetting','',2);
         }
 
     }
-
-
-
 
 }

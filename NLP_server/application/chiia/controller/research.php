@@ -32,9 +32,35 @@ class research extends Base{
         $count_labeled = $count_labeled[0]['article_count'];
         $count_unlabeled = $count_unlabeled[0]['article_count'];
 
+        $result = Db::table('NLP_ML')->where('id',1)->select();
+        $accuracy = $result[0]['accuracy']*100;
+        $performance = sprintf("%.0f",$accuracy);
+        $chartInfo = $result[0]['TERMFREQ'];
+        $this->assign('chartInfo',$chartInfo);
+        $this->assign('performance',$performance);
+
+
         $this->assign('count_article',$count_article);
         $this->assign('count_labeled',$count_labeled);
         $this->assign('count_unlabeled',$count_unlabeled);
+
+        $value = [];
+        $current = date('Y-m-d');
+        $current_year = date('Y');
+        $tmp_date = $current_year.'-01-01';
+        $current_year_count = Db::table('NLP_ARTICLE')->where('date','<=',$current)->where('date','>=',$tmp_date)->count();
+        for($i=5;$i>0;$i--){
+            $tmp_year = $current_year- $i;
+            $tmp_lower_date = $tmp_year.'-01-01';
+            $tmp_upper_date = $tmp_year.'-12-31';
+            $tmp_year_count = Db::table('NLP_ARTICLE')->where('date','<=',$tmp_upper_date)->where('date','>=',$tmp_lower_date)->count();
+            $array = [strval($tmp_year), $tmp_year_count];
+            $value[] = $array;
+        }
+        $array = [ $current_year, $current_year_count,];
+        $value[] = $array;
+        $yearly_count = json_encode($value);
+        $this->assign('yearlyCount',$yearly_count);
 
         return $this->fetch();
     }
@@ -105,6 +131,7 @@ class research extends Base{
                 'author' => $tmp['author'],
                 'date' => $tmp['date'],
                 'source' => $tmp['source'],
+                'url' => $tmp['url'],
                 'status' => $tmp['status'],
                 'labeledby' => $tmp['labeledby'],
                 'labeledtime' => $tmp['labeledtime'],
@@ -137,6 +164,7 @@ class research extends Base{
                 'author' => $tmp['author'],
                 'date' => $tmp['date'],
                 'source' => $tmp['source'],
+                'url' => $tmp['url'],
                 'status' => $tmp['status'],
                 'labeledby' => $tmp['labeledby'],
                 'labeledtime' => $tmp['labeledtime'],
@@ -160,6 +188,7 @@ class research extends Base{
                 'author' => $tmp['author'],
                 'date' => $tmp['date'],
                 'source' => $tmp['source'],
+                'url' => $tmp['url'],
                 'status' => $tmp['status'],
                 'labeledby' => $tmp['labeledby'],
                 'labeledtime' => $tmp['labeledtime'],
@@ -183,6 +212,7 @@ class research extends Base{
                 'author' => $tmp['author'],
                 'date' => $tmp['date'],
                 'source' => $tmp['source'],
+                'url' => $tmp['url'],
                 'status' => $tmp['status'],
                 'labeledby' => $tmp['labeledby'],
                 'labeledtime' => $tmp['labeledtime'],
@@ -256,7 +286,7 @@ class research extends Base{
         $user = Session::get('username');
 
         $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->update(['status'=>1, 'assign'=>'1',
-            'labeledby'=> $user,'labeledtime' => date("Y-m-d")]);
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d"),'likelyhood'=>1.0]);
 
         if($result){
             return $this->success('Labeled success');
@@ -272,7 +302,7 @@ class research extends Base{
         $user = Session::get('username');
 
         $result = Db::table('NLP_ARTICLE')->where('articleID',$id)->update(['status'=>2, 'assign'=>'1',
-            'labeledby'=> $user,'labeledtime' => date("Y-m-d")]);
+            'labeledby'=> $user,'labeledtime' => date("Y-m-d"),'likelyhood'=>0]);
 
         if($result){
             return $this->success('Labeled success');

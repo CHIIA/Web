@@ -220,16 +220,13 @@ var Dashboard = function() {
                 return (Math.floor(Math.random() * (1 + 50 - 20))) + 10;
             }
 
-            var visitors = [
-                ['02/2013', 1500],
-                ['03/2013', 2500],
-                ['04/2013', 1700],
-                ['05/2013', 800],
-                ['06/2013', 1500],
-                ['07/2013', 2350],
-                ['08/2013', 1500],
-                ['09/2013', 1300],
-                ['10/2013', 4600]
+            var data = [
+                ['2013', 0],
+                ['2014', 500],
+                ['2015', 500],
+                ['2016', 500],
+                ['2017', 150],
+                ['2018', 150]
             ];
 
 
@@ -239,14 +236,14 @@ var Dashboard = function() {
                 $('#site_statistics_content').show();
 
                 var plot_statistics = $.plot($("#site_statistics"), [{
-                        data: visitors,
+                        data: data,
                         lines: {
                             fill: 0.6,
                             lineWidth: 0
                         },
                         color: ['#f89f9f']
                     }, {
-                        data: visitors,
+                        data: data,
                         points: {
                             show: true,
                             fill: true,
@@ -303,7 +300,7 @@ var Dashboard = function() {
                             var x = item.datapoint[0].toFixed(2),
                                 y = item.datapoint[1].toFixed(2);
 
-                            showChartTooltip(item.pageX, item.pageY, item.datapoint[0], item.datapoint[1] + ' visits');
+                            showChartTooltip(item.pageX, item.pageY, item.datapoint[0], item.datapoint[1] + ' articles');
                         }
                     } else {
                         $("#tooltip").remove();

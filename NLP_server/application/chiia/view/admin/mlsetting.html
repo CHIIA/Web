@@ -30,7 +30,25 @@
     <link href="/assets/layouts/layout4/css/themes/light.min.css" rel="stylesheet" type="text/css" id="style_color" />
     <link href="/assets/layouts/layout4/css/custom.min.css" rel="stylesheet" type="text/css" />
     <!-- END THEME LAYOUT STYLES -->
-    <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <link rel="shortcut icon" href="favicon.ico" />
+
+    <script type="text/javascript">
+        function logView()
+        {
+            var div = document.getElementById('scrolldIV');
+            var log='Loading Log...';
+            var id = setInterval(getLog, 1000);
+            function getLog(){
+                $.get("{:url('Admin/getModelLog')}",function (data) {
+                    log = data;
+                })
+                div.innerHTML = log;
+                div.scrollTop = div.scrollHeight;
+            }
+        }
+    </script>
+
+</head>
 <!-- END HEAD -->
 
 <body class="page-container-bg-solid page-header-fixed page-sidebar-closed-hide-logo page-md">
@@ -228,7 +246,23 @@
             <!-- END PAGE HEAD-->
             <!-- BEGIN PAGE BASE CONTENT -->
 
-            <button type="submit" class="btn blue" onclick="window.location.href='startML'">START LEARNING</button>
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption font-dark">
+                        <i class="icon-settings font-dark"></i>
+                        <span class="caption-subject bold uppercase">Model Log</span>
+                    </div>
+                </div>
+                <div id="example">
+                    <div id="example_main">
+                        <div id="scrolldIV" style="overflow:auto; height: 300px; width: 1000px; border: 1px solid #999;">
+                            <script>logView()</script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn blue" onclick="alert('Success! Please Wait A While');window.location.href='startML'">TRAIN MODEL</button>
             
             <!-- END PAGE BASE CONTENT -->
         </div>

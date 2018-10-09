@@ -22,7 +22,7 @@
         <link href="/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
         <!-- END GLOBAL MANDATORY STYLES -->
         <!-- BEGIN THEME GLOBAL STYLES -->
-        <link href="/assets/global/css/components-md.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="/assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
         <link href="/assets/global/css/plugins-md.min.css" rel="stylesheet" type="text/css" />
         <!-- END THEME GLOBAL STYLES -->
         <!-- BEGIN THEME LAYOUT STYLES -->
@@ -276,7 +276,7 @@
                                             <a class="btn btn-circle btn-icon-only btn-default" href="task?articleID={$next}&&method=next">
                                                 <i class="fa fa-arrow-right"></i>
                                             </a>
-                                            <a class="btn btn-circle btn-icon-only btn-default" href="labelRelevent?articleID={$article['articleID']}">
+                                            <a class="btn btn-circle btn-icon-only btn-default" href="labelRelevent?articleID={$article['articleID']}" >
                                                 <i class="fa fa-check font-green"></i>
                                             </a>
                                             <a class="btn btn-circle btn-icon-only btn-default" href="labelIrrelevent?articleID={$article['articleID']}">
@@ -285,55 +285,60 @@
                                         </div>
                                     </div>
                                     <div class="portlet-body">
-                                        <div class="row">
-                                            <br class="col-md-12">
-                                                <div class="well">
-                                                    <address style="margin-bottom: 0px">
-                                                        <?php if($article['status'] == 0){ ?>
-                                                        <span class="label label-sm label-default"> Unlabeled </span>
-                                                        <?php }elseif($article['status'] == 1){ ?>
-                                                        <span class="label label-sm label-success"> Relevant </span>
-                                                        <?php }elseif($article['status'] == 2){ ?>
-                                                        <span class="label label-sm label-danger"> Irrelevant </span>
-                                                        <?php }?>
-                                                        <br>
+                                        <table class="table table-bordered table-striped">
+                                            <tbody>
+                                            <tr>
+                                                <td width="20%">Status</td>
+                                                <td width="80%"><?php if($article['status'] == 0){ ?>
+                                                    <span class="label label-sm label-default"> Unlabeled </span>
+                                                    <?php }elseif($article['status'] == 1){ ?>
+                                                    <span class="label label-sm label-success"> Relevant </span>
+                                                    <?php }elseif($article['status'] == 2){ ?>
+                                                    <span class="label label-sm label-danger"> Irrelevant </span>
+                                                    <?php }?></td>
+                                            </tr>
+                                            <tr>
+                                                <td width="20%">Author</td>
+                                                <td width="80%">{$article.author}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="20%">Publish Date</td>
+                                                <td width="80%">{$article.date}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="20%">Crawl Date</td>
+                                                <td width="80%">{$article.crawldate}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="20%">AN</td>
+                                                <td width="80%">{$article.ID}</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="20%">ID</td>
+                                                <td width="80%">{$article.articleID}</td>
+                                            </tr>
 
-                                                        <br> ID:{$article.articleID}
-                                                        <br> AN:{$article.ID}
-                                                        <br> Publish Date:{$article.date}
-                                                        <br> Crawl Date:{$article.crawldate}
+                                            </tbody>
+                                        </table>
 
-                                                        <br>Author:{$article.author}
-                                                        <br>
-                                                    </address>
-                                                </div>
-                                                <div>
-                                                    <?php if($article['source'] == 'Website' || $article['source'] == 'Blog'){ ?>
-                                                    <br> This article is a WEBSITE resources, CLICK to OPEN new page
-                                                    <br>
-                                                    <br> !!! This is a copy of the original resources!!!
-                                                    <br>
-                                                    <br> !!! NO USE FOR COMMERCIAL!!!!!!!!!!!!!!!!!!!!!!
-                                                    <br>
-                                                    <br>
-                                                    <br>
-                                                    <form method="post" action="viewWebsiteContent" target="_blank">
-                                                        <input type="hidden" name="articleID" value="{$article.articleID}"/>
-                                                        <div class="form-actions noborder">
-                                                            <button type="submit" class="btn blue">New Page to View</button>
-                                                        </div>
-                                                    </form>
-                                                    <?php }else{ ?>
 
-                                                    <button id="exportToPdf" style="float:right">Export PDF</button>
-                                                    <div id="export_content">
-                                                        {$article.content}
-                                                    </div>
 
-                                                    <?php }?>
-                                                </div>
-                                            </div>
+                                        <?php if($article['source'] == 'Website' || $article['source'] == 'Blog'){ ?>
+                                        <div class="note note-warning">
+                                            <h4>
+                                                This article is a <b>WEBSITE</b> resource, CLICK the button below to view it in a new page
+
+                                            </h4>
                                         </div>
+                                        <input type="button" value="New Page" class="btn blue" onclick="window.open('{$article.url}')">
+                                        <?php }else{ ?>
+
+                                        <button id="exportToPdf" style="float:right">Export PDF</button>
+                                        <div id="export_content">
+                                            {$article.content}
+                                        </div>
+
+                                        <?php }?>
                                     </div>
                                     <div>
                                         <div class="actions" align="right">
